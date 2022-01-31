@@ -69,7 +69,7 @@
     <form method="post" action="<?= base_url('peserta/add_data') ?>" class="px-2">
         <?= csrf_field(); ?>
             <div class="d-flex flex-row-reverse bd-highlight mt-1">
-                <button class="btn btn-primary ">Cek Pendaftaran</button>
+                <a href="<?= base_url('peserta/cek_data') ?>"><button type="button" class="btn btn-primary btn-sm">Cek Pendaftaran</button></a>
             </div><br>
         <div class="form-floating">
           <input type="text" class="form-control" name="kode_vaksin_3" id="kode_vaksin_3" placeholder="Masukkan Nama"

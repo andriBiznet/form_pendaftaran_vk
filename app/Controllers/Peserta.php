@@ -7,6 +7,7 @@ use App\Models\PesertaModel;
 class Peserta extends BaseController
 {
     protected $peserta;
+	protected $table = 'tbl_pendaftaran';
  
     function __construct()
     {
@@ -17,6 +18,12 @@ class Peserta extends BaseController
     {
         $data['peserta'] = $this->peserta->findAll();
         return view('peserta/index', $data);
+    } 
+
+    public function cek_data()
+    {
+    	$data['peserta'] = $this->peserta->findAll();
+        return view('peserta/cek_data', $data);
     }
 
     public function add_data()
@@ -120,6 +127,28 @@ class Peserta extends BaseController
         $result_tanggal_lahir = $r_tanggal_lahir .'-'. $r_bulan_lahir .'-'. $r_tahun_lahir;
         // echo $result_tanggal_lahir;exit();
 
+    	$nik = $this->request->getVar('nik');
+		$data['peserta'] = $this->peserta->table($this->table)->select('id_pendaftaran, nik')->where(["nik" => $nik])->get()->getResult();
+    	$cek_nik = count($data['peserta']);
+
+    	if ($cek_nik) {
+    		session()->setFlashdata('error', 'Mohon maaf nik anda sudah terdaftar. Terimakasih');
+    		return redirect()->route('peserta');
+    	}else{
+	        $this->peserta->insert([
+	            'kode_vaksin_3' => $this->request->getVar('kode_vaksin_3'),
+	            'jenis_vaksinasi' => $this->request->getVar('jenis_vaksin'),
+	            'tanggal_vac' => $this->request->getVar('tanggal_vaksin'),
+	            'metode_kedatangan' => $this->request->getVar('sesi_kedatangan'),
+	            'nama' => $this->request->getVar('nama'),
+	            'tanggal_lahir' => $result_tanggal_lahir,
+	            'nik' => $this->request->getVar('nik'),
+	            'no_hp' => $this->request->getVar('no_hp')
+	        ]);
+	        session()->setFlashdata('message', 'Tambah Data Peserta Berhasil');
+	        return redirect()->route('peserta');
+    	}
+
         $this->peserta->insert([
             'kode_vaksin_3' => $this->request->getVar('kode_vaksin_3'),
             'jenis_vaksinasi' => $this->request->getVar('jenis_vaksin'),
@@ -132,6 +161,20 @@ class Peserta extends BaseController
         ]);
         session()->setFlashdata('message', 'Tambah Data Peserta Berhasil');
         return redirect()->route('peserta');
+    }
+
+    public function result_cek_data()
+    {
+    	$nik = $this->request->getVar('nik');
+		$data['peserta'] = $this->peserta->table($this->table)->select('id_pendaftaran, nik')->where(["nik" => $nik])->get()->getResult();
+    	$cek_nik = count($data['peserta']);
+
+    	if ($cek_nik) {
+    		echo "ada";
+    	}else{
+	        session()->setFlashdata('message', 'Mohon maaf nik anda tidak ada. Silahkan registrasi kembali. Terimakasih');
+	        return redirect()->route('peserta/cek_data');
+    	}
     }
 
 }

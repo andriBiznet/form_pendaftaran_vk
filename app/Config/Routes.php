@@ -33,6 +33,7 @@ $routes->setAutoRoute(true);
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
 $routes->get('/peserta', 'Peserta::index');
+$routes->get('/peserta/cek_data', 'Peserta::cek_data');
 $routes->post('/peserta/store', 'Peserta::add_data');
 
 /*
